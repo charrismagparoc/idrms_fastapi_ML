@@ -1,0 +1,53 @@
+from fastapi import APIRouter, Depends
+from sqlalchemy import func
+from sqlalchemy.orm import Session
+from collections import Counter
+
+from database import get_db
+import models
+import schemas
+
+router = APIRouter(prefix="/reports", tags=["Reports – ReportsPage / ReportsScreen"])
+
+
+@router.get("/summary/", response_model=schemas.ReportSummary)
+def get_report_summary(db: Session = Depends(get_db)):
+   
+ 
+    all_incidents = db.query(models.Incident).all()
+    incidents_total    = len(all_incidents)
+    incidents_resolved = sum(1 for i in all_incidents if i.status == "Resolved")
+    incidents_pending  = sum(1 for i in all_incidents if i.status == "Pending")
+
+   
+    alerts_total = db.query(func.count(models.Alert.id)).scalar()
+
+   
+    all_residents = db.query(models.Resident).all()
+    residents_evacuated = sum(1 for r in all_residents if r.evacuation_status == "Evacuated")
+    residents_safe      = sum(1 for r in all_residents if r.evacuation_status == "Safe")
+
+   
+    all_resources = db.query(models.Resource).all()
+    resources_available = sum(1 for r in all_resources if r.status == "Available")
+    resources_depleted  = sum(1 for r in all_resources if r.status == "Depleted")
+
+    zone_counter = Counter(i.zone for i in all_incidents)
+    top_zones = [{"zone": z, "count": c} for z, c in zone_counter.most_common(5)]
+
+
+    type_counter = Counter(i.type for i in all_incidents)
+    top_types = [{"type": t, "count": c} for t, c in type_counter.most_common(5)]
+
+    return schemas.ReportSummary(
+        incidents_total=incidents_total,
+        incidents_resolved=incidents_resolved,
+        incidents_pending=incidents_pending,
+        alerts_total=alerts_total,
+        residents_evacuated=residents_evacuated,
+        residents_safe=residents_safe,
+        resources_available=resources_available,
+        resources_depleted=resources_depleted,
+        top_incident_zones=top_zones,
+        top_incident_types=top_types,
+    )
