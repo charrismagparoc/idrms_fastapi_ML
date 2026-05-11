@@ -1,0 +1,54 @@
+{
+  "trained_at": "2026-05-09T19:52:59.587238+00:00",
+  "dataset_source": "Project CCHAIN climate_atmosphere (Thinking Machines, 2024) \u2014 Cagayan de Oro barangay level",
+  "dataset_url": "https://www.kaggle.com/datasets/thinkdatasci/project-cchain/",
+  "dataset_size": 5000,
+  "feature_columns": [
+    "zone_Zone 2",
+    "zone_Zone 3",
+    "zone_Zone 4",
+    "zone_Zone 5",
+    "zone_Zone 6",
+    "evac_Evacuated",
+    "evac_Unaccounted",
+    "weather_High",
+    "weather_Medium",
+    "tag_bedridden",
+    "tag_pwd",
+    "tag_senior_citizen",
+    "tag_pregnant",
+    "tag_infant",
+    "household_members",
+    "rainy_season",
+    "zone_incident_count",
+    "risk_score",
+    "precipitation",
+    "temp_mean",
+    "heat_index",
+    "wind_speed",
+    "relative_humidity"
+  ],
+  "models": {
+    "Decision Tree": {
+      "accuracy": 1.0,
+      "precision_high": 1.0,
+      "recall_high": 1.0,
+      "f1_high": 1.0,
+      "f1_weighted": 1.0
+    },
+    "Random Forest": {
+      "accuracy": 0.999,
+      "precision_high": 0.9988,
+      "recall_high": 1.0,
+      "f1_high": 0.9994,
+      "f1_weighted": 0.999
+    },
+    "Logistic Regression": {
+      "accuracy": 0.98,
+      "precision_high": 1.0,
+      "recall_high": 0.9826,
+      "f1_high": 0.9912,
+      "f1_weighted": 0.9805
+    }
+  }
+}

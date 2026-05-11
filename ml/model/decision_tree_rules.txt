@@ -1,0 +1,13 @@
+|--- risk_score <= 69.50
+|   |--- risk_score <= 39.50
+|   |   |--- class: LOW
+|   |--- risk_score >  39.50
+|   |   |--- evac_Unaccounted <= 0.50
+|   |   |   |--- class: MEDIUM
+|   |   |--- evac_Unaccounted >  0.50
+|   |   |   |--- class: MEDIUM
+|--- risk_score >  69.50
+|   |--- tag_pwd <= 0.50
+|   |   |--- class: HIGH
+|   |--- tag_pwd >  0.50
+|   |   |--- class: HIGH
