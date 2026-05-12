@@ -1,3 +1,10 @@
+"""
+ml/model_loader.py
+==================
+Loads all trained .pkl models once at server startup and exposes
+predict_resident_risk() for use by predict_router.py.
+"""
+
 import os
 import json
 import datetime
@@ -7,7 +14,7 @@ import joblib
 
 MODEL_DIR = os.path.join(os.path.dirname(__file__), "model")
 
-
+# ── Zone base scores from constants.js / useRiskEngine.js ───────────────────
 ZONE_BASE = {
     "Zone 1": 25, "Zone 2": 42, "Zone 3": 78,
     "Zone 4": 18, "Zone 5": 82, "Zone 6": 48,
@@ -21,7 +28,7 @@ VULN_WEIGHTS = {
 EVAC_SCORE = {"Safe": 0, "Evacuated": -15, "Unaccounted": 18}
 RAINY_MONTHS = set(range(6, 12))
 
-
+# ── Loaded models (populated at startup) ────────────────────────────────────
 _models  = {}
 _scaler  = None
 _columns = []
@@ -75,20 +82,20 @@ def _build_feature_row(zone, evac_status, household_members,
     """Convert raw resident inputs into the encoded feature row the model expects."""
     row = {col: 0 for col in _columns}
 
-    
+    # Zone one-hot (Zone 1 is reference → all zeros)
     zone_col = f"zone_{zone}"
     if zone_col in row:
         row[zone_col] = 1
 
-    
+    # Evacuation one-hot (Safe is reference → all zeros)
     if evac_status == "Evacuated"   and "evac_Evacuated"   in row: row["evac_Evacuated"]   = 1
     if evac_status == "Unaccounted" and "evac_Unaccounted" in row: row["evac_Unaccounted"] = 1
 
-    
+    # Weather one-hot (None is reference → all zeros)
     if weather_risk == "Medium" and "weather_Medium" in row: row["weather_Medium"] = 1
     if weather_risk == "High"   and "weather_High"   in row: row["weather_High"]   = 1
 
-
+    # Vulnerability tags
     tag_map = {
         "Bedridden":      "tag_bedridden",
         "PWD":            "tag_pwd",
@@ -100,7 +107,7 @@ def _build_feature_row(zone, evac_status, household_members,
         if tag in (vuln_tags or []) and col in row:
             row[col] = 1
 
-    
+    # Numerical features
     if "household_members"   in row: row["household_members"]   = int(household_members or 1)
     if "rainy_season"        in row: row["rainy_season"]        = int(bool(rainy_season))
     if "zone_incident_count" in row: row["zone_incident_count"] = int(zone_incident_count or 0)
@@ -116,11 +123,11 @@ def predict_resident_risk(zone, evac_status, household_members,
     if not _loaded:
         return {"error": "Models not loaded. Run python ml/train_model.py first."}
 
-    
+    # Auto-detect rainy season if not provided
     if rainy_season is None:
         rainy_season = (datetime.datetime.now().month in RAINY_MONTHS)
 
-   
+    # Auto-compute risk_score if not provided
     if risk_score is None:
         risk_score = compute_risk_score(
             zone, evac_status, household_members,

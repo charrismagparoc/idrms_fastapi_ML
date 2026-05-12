@@ -1,3 +1,19 @@
+"""
+routers/users_router.py
+========================
+CRUD for system user accounts. Used by:
+  • Web:    UsersPage.jsx   → GET / POST / PATCH / DELETE /api/users/
+  • Mobile: UsersScreen.js  → same endpoints
+
+Endpoints
+---------
+GET    /api/users/       – list all users
+POST   /api/users/       – create user account
+GET    /api/users/{id}/  – single user
+PATCH  /api/users/{id}/  – partial update (name, role, status, password)
+DELETE /api/users/{id}/  – delete
+"""
+
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 from typing import List

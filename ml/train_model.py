@@ -1,3 +1,44 @@
+"""
+ml/train_model.py — IDRMS ML Training with Project CCHAIN Dataset
+===================================================================
+Barangay Kauswagan, Cagayan de Oro City
+
+DATASET SOURCE:
+  Project CCHAIN (Climate Change, Health, and Artificial Intelligence)
+  Thinking Machines Data Science, 2024
+  Kaggle: https://www.kaggle.com/datasets/thinkdatasci/project-cchain/
+  HDX:    https://data.humdata.org/dataset/project-cchain
+  License: CC BY 4.0
+
+  Table used: climate_atmosphere
+  City: Cagayan de Oro (one of 12 Philippine cities in CCHAIN)
+  Coverage: 20 years daily climate data (2003-2022) at BARANGAY level
+
+DATASET COLUMNS (climate_atmosphere):
+  city, barangay, date, month
+  precipitation    (mm/day)   → rainy_season
+  temp_mean        (°C)       → weather_risk (with humidity + wind)
+  temp_min         (°C)       → (supporting feature)
+  temp_max         (°C)       → (supporting feature)
+  heat_index       (°C)       → weather_risk
+  wind_speed       (m/s)      → weather_risk
+  relative_humidity (%)       → weather_risk
+
+  Combined with IDRMS resident survey fields:
+  zone, evacuation_status, household_members, zone_incident_count,
+  vulnerability tags (Bedridden, PWD, Senior Citizen, Pregnant, Infant)
+
+  TARGET: risk_label (HIGH/MEDIUM/LOW) from IDRMS risk_score formula
+
+WHY CCHAIN FITS IDRMS:
+  1. It is specifically for Philippine cities INCLUDING Cagayan de Oro
+  2. It is at the BARANGAY level — same as IDRMS zones
+  3. Precipitation data directly maps to rainy_season in IDRMS
+  4. Heat index + wind speed maps to weather_risk in useWeather.js
+  5. It is validated against PAGASA ground truth data
+  6. CC BY 4.0 license — freely usable for this project
+"""
+
 import os, json, datetime, warnings, random
 import numpy as np
 import pandas as pd
@@ -53,7 +94,7 @@ def main():
     print("STEP 2 — Feature Engineering & Encoding")
     print(sep)
 
-    
+    # One-hot encode zone and evacuation_status
     zone_d = pd.get_dummies(df['zone'],             prefix='zone')
     evac_d = pd.get_dummies(df['evacuation_status'],prefix='evac')
     wx_d   = pd.get_dummies(df['weather_risk'],     prefix='weather')
@@ -62,7 +103,7 @@ def main():
     wx_d.drop(  columns=['weather_None'],inplace=True, errors='ignore')
 
     tag_cols = ['tag_bedridden','tag_pwd','tag_senior_citizen','tag_pregnant','tag_infant']
-    
+    # Include CCHAIN climate columns as features
     climate_cols = ['precipitation','temp_mean','heat_index','wind_speed','relative_humidity']
     num_cols = ['household_members','rainy_season','zone_incident_count','risk_score']
 
@@ -148,7 +189,7 @@ def main():
         joblib.dump(model, os.path.join(MODEL_DIR,fname))
         print(f"\n  Saved → {fname}")
 
-
+    # Feature importances
     rf = models_cfg["Random Forest"]
     fi = pd.DataFrame({"feature":feat_cols,"importance":rf.feature_importances_}
                      ).sort_values("importance",ascending=False)

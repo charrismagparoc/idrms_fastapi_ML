@@ -1,3 +1,19 @@
+"""
+routers/resources_router.py
+============================
+CRUD for relief resources (food, equipment, medical supplies). Used by:
+  • Web:    ResourcesPage.jsx   → GET / POST / PATCH / DELETE /api/resources/
+  • Mobile: ResourcesScreen.js  → same endpoints
+
+Endpoints
+---------
+GET    /api/resources/       – list all resources
+POST   /api/resources/       – add a resource
+GET    /api/resources/{id}/  – single resource
+PATCH  /api/resources/{id}/  – partial update
+DELETE /api/resources/{id}/  – delete
+"""
+
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 from typing import List
