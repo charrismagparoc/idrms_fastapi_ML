@@ -8,7 +8,7 @@ All routes under /api/predict/
 import datetime
 from typing import List, Optional
 from fastapi import APIRouter, HTTPException
-from pydantic import BaseModel
+from pydantic import BaseModel, ConfigDict
 
 from ml.model_loader import (
     predict_resident_risk,
@@ -33,6 +33,8 @@ VALID_MODELS  = ["decision_tree", "random_forest", "logistic_regression"]
 # ── Schemas ──────────────────────────────────────────────────────────────────
 
 class ResidentPredictInput(BaseModel):
+    model_config = ConfigDict(protected_namespaces=())  # ← fixes "model_name" warning
+
     zone:                 str
     evacuation_status:    str
     household_members:    int               = 1
@@ -48,6 +50,8 @@ class ResidentPredictInput(BaseModel):
 
 
 class ResidentPredictOutput(BaseModel):
+    model_config = ConfigDict(protected_namespaces=())  # ← fixes "model_used" warning
+
     resident_name:    Optional[str]
     resident_id:      Optional[int]
     zone:             str
@@ -63,6 +67,8 @@ class ResidentPredictOutput(BaseModel):
 
 
 class BatchPredictInput(BaseModel):
+    model_config = ConfigDict(protected_namespaces=())  # ← fixes "model_name" warning
+
     residents:  List[ResidentPredictInput]
     model_name: str = "random_forest"
 
