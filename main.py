@@ -1,8 +1,8 @@
 """
 main.py — IDRMS FastAPI Entry Point
 =====================================
-Run:  python -m uvicorn main:app --reload --host 0.0.0.0 --port 8000
-Docs: http://127.0.0.1:8000/docs
+Run:  python -m uvicorn main:app --reload --host 0.0.0.0 --port 8080
+Docs: http://127.0.0.1:8080/docs
 """
 
 from fastapi import FastAPI
@@ -62,6 +62,6 @@ app.include_router(predict_router,            prefix=PREFIX)
 def root():
     return {
         "message": "IDRMS API is running.",
-        "docs":    "http://127.0.0.1:8000/docs",
+        "docs":    "http://127.0.0.1:8080/docs",
         "ml":      "POST /api/predict/resident/ to classify flood risk",
     }
