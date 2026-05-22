@@ -112,6 +112,7 @@ class AlertInput(BaseModel):
     zone: str = "All Zones"
     recipients_count: int = 0
     sent_by: str = "System"
+    recipients: List[str] = []      # ← email list of selected residents
 
 class AlertOut(BaseModel):
     id: int
@@ -192,6 +193,7 @@ class ResidentInput(BaseModel):
     address: str = ""
     household_members: int = 1
     contact: str = ""
+    email: str = ""
     evacuation_status: str = "Safe"
     vulnerability_tags: List[str] = []
     notes: str = ""
@@ -206,6 +208,7 @@ class ResidentUpdateInput(BaseModel):
     address: Optional[str] = None
     household_members: Optional[int] = None
     contact: Optional[str] = None
+    email: Optional[str] = None
     evacuation_status: Optional[str] = None
     vulnerability_tags: Optional[List[str]] = None
     notes: Optional[str] = None
@@ -217,6 +220,7 @@ class ResidentOut(BaseModel):
     address: str
     household_members: int
     contact: str
+    email: str
     evacuation_status: str
     vulnerability_tags: List[str]
     notes: str
