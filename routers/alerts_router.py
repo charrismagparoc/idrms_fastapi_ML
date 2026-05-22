@@ -14,22 +14,17 @@ router = APIRouter(prefix="/alerts", tags=["Alerts - AlertsPage / AlertsScreen"]
 
 
 def send_email_alert(recipients: list, subject: str, body: str):
-    """Send email to list of recipients using Gmail SMTP."""
     if not recipients:
         return
-
     try:
         server = smtplib.SMTP("smtp.gmail.com", 587)
         server.starttls()
         server.login(MAIL_USERNAME, MAIL_PASSWORD)
-
         for email in recipients:
             msg = MIMEMultipart("alternative")
             msg["Subject"] = subject
             msg["From"]    = MAIL_FROM
             msg["To"]      = email
-
-            # HTML email body
             html = f"""
             <html>
             <body style="font-family: Arial, sans-serif; background: #0f1923; color: #ffffff; padding: 20px;">
@@ -49,13 +44,10 @@ def send_email_alert(recipients: list, subject: str, body: str):
             </body>
             </html>
             """
-
             msg.attach(MIMEText(html, "html"))
             server.sendmail(MAIL_FROM, email, msg.as_string())
-
         server.quit()
         print(f"✅ Email sent to {len(recipients)} recipient(s)")
-
     except Exception as e:
         print(f"❌ Email error: {e}")
 
@@ -71,22 +63,13 @@ def create_alert(
     background_tasks: BackgroundTasks,
     db: Session = Depends(get_db),
 ):
-    # Save alert to database
     record = models.Alert(**payload.model_dump(exclude={"recipients"}))
     db.add(record)
     db.commit()
     db.refresh(record)
-
-    # Send email in background (non-blocking)
     if payload.recipients:
         subject = f"[IDRMS] {payload.level} Alert – {payload.zone}"
-        background_tasks.add_task(
-            send_email_alert,
-            payload.recipients,
-            subject,
-            payload.message,
-        )
-
+        background_tasks.add_task(send_email_alert, payload.recipients, subject, payload.message)
     return record
 
 

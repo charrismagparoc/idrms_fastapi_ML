@@ -1,0 +1,24 @@
+{
+  "dataset_source": "Project CCHAIN climate_atmosphere \u2014 Thinking Machines Data Science (2024)",
+  "dataset_url": "https://www.kaggle.com/datasets/thinkdatasci/project-cchain/",
+  "city": "Cagayan de Oro",
+  "barangay": "Kauswagan",
+  "coverage": "20 years daily climate (2003-2022) at barangay level",
+  "license": "CC BY 4.0",
+  "cchain_columns_used": {
+    "precipitation": "\u2192 rainy_season (>=5mm/day = rainy)",
+    "temp_mean": "\u2192 weather_risk (combined with humidity + wind)",
+    "heat_index": "\u2192 weather_risk (high heat index = danger)",
+    "wind_speed": "\u2192 weather_risk (>=5m/s = High, >=3m/s = Medium)",
+    "relative_humidity": "\u2192 weather_risk (used with temp for heat stress)"
+  },
+  "idrms_features": {
+    "zone": "Geographic zone (Zone 1-6) from ZONE_BASE in constants.js",
+    "evacuation_status": "Safe/Evacuated/Unaccounted from useRiskEngine.js",
+    "household_members": "Number of people in household from survey form",
+    "zone_incident_count": "Past flood incidents in zone",
+    "vulnerability_tags": "Bedridden/PWD/Senior/Pregnant/Infant from survey",
+    "risk_score": "Computed by IDRMS scoreResident() formula",
+    "risk_label": "HIGH>=70 / MEDIUM 40-69 / LOW<40"
+  }
+}
