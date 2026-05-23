@@ -8,7 +8,7 @@ One Input + one Output class per resource, named after the screen that uses it.
 from __future__ import annotations
 from datetime import datetime
 from typing import List, Optional
-from pydantic import BaseModel, EmailStr
+from pydantic import BaseModel, EmailStr, Field
 
 
 # ---------------------------------------------------------------------------
@@ -187,12 +187,12 @@ class EvacuationCenterOut(BaseModel):
 # ---------------------------------------------------------------------------
 
 class ResidentInput(BaseModel):
-    name: str
+    name: str = Field(alias="full_name")
     zone: str
     address: str = ""
     household_members: int = 1
-    contact: str = ""
-    email: str = ""
+    contact: str = Field("", alias="contact_number")
+    email: str = Field("", alias="email_address")
     evacuation_status: str = "Safe"
     vulnerability_tags: List[str] = []
     notes: str = ""
@@ -201,16 +201,20 @@ class ResidentInput(BaseModel):
     lat: Optional[float] = None
     lng: Optional[float] = None
 
+    model_config = {"populate_by_name": True}
+
 class ResidentUpdateInput(BaseModel):
-    name: Optional[str] = None
+    name: Optional[str] = Field(None, alias="full_name")
     zone: Optional[str] = None
     address: Optional[str] = None
     household_members: Optional[int] = None
-    contact: Optional[str] = None
-    email: Optional[str] = None
+    contact: Optional[str] = Field(None, alias="contact_number")
+    email: Optional[str] = Field(None, alias="email_address")
     evacuation_status: Optional[str] = None
     vulnerability_tags: Optional[List[str]] = None
     notes: Optional[str] = None
+
+    model_config = {"populate_by_name": True}
 
 class ResidentOut(BaseModel):
     id: int
@@ -218,20 +222,19 @@ class ResidentOut(BaseModel):
     zone: str
     address: Optional[str] = ""
     household_members: Optional[int] = 1
-    contact: Optional[str] = ""
-    email: Optional[str] = ""
+    contact: Optional[str] = Field(None, alias="contact_number")
+    email: Optional[str] = Field(None, alias="email_address")
     evacuation_status: Optional[str] = "Safe"
     vulnerability_tags: Optional[List[str]] = []
     notes: Optional[str] = ""
     added_by: Optional[str] = "System"
     source: Optional[str] = "web"
-    lat: Optional[float]
-    lng: Optional[float]
-    added_at: Optional[datetime]
-    updated_at: Optional[datetime]
+    lat: Optional[float] = None
+    lng: Optional[float] = None
+    added_at: Optional[datetime] = None
+    updated_at: Optional[datetime] = None
 
-    class Config:
-        from_attributes = True
+    model_config = {"from_attributes": True, "populate_by_name": True}
 
 
 # ---------------------------------------------------------------------------
