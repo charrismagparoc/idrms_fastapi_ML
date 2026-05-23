@@ -216,15 +216,15 @@ class ResidentOut(BaseModel):
     id: int
     name: str
     zone: str
-    address: str
-    household_members: int
-    contact: str
-    email: str = ""
-    evacuation_status: str
-    vulnerability_tags: List[str]
-    notes: str
-    added_by: str
-    source: str
+    address: Optional[str] = ""
+    household_members: Optional[int] = 1
+    contact: Optional[str] = ""
+    email: Optional[str] = ""
+    evacuation_status: Optional[str] = "Safe"
+    vulnerability_tags: Optional[List[str]] = []
+    notes: Optional[str] = ""
+    added_by: Optional[str] = "System"
+    source: Optional[str] = "web"
     lat: Optional[float]
     lng: Optional[float]
     added_at: Optional[datetime]
