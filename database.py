@@ -1,26 +1,9 @@
 
 import os
-import logging
 from sqlalchemy import create_engine
 from sqlalchemy.orm import declarative_base, sessionmaker
 
-logger = logging.getLogger(__name__)
-BASE_DIR = os.path.dirname(os.path.abspath(__file__))
-_raw_database_url = os.getenv("DATABASE_URL", "")
-
-if _raw_database_url.startswith("postgres://"):
-    # SQLAlchemy 2 prefers the modern URI scheme for PostgreSQL
-    _raw_database_url = _raw_database_url.replace("postgres://", "postgresql://", 1)
-
-if _raw_database_url.startswith("sqlite:///"):
-    sqlite_path = _raw_database_url[len("sqlite:///") :]
-    if sqlite_path.startswith("./") or sqlite_path == "idrms.db" or not os.path.isabs(sqlite_path):
-        sqlite_path = os.path.normpath(os.path.join(BASE_DIR, sqlite_path))
-    DATABASE_URL = f"sqlite:///{sqlite_path}"
-elif _raw_database_url:
-    DATABASE_URL = _raw_database_url
-else:
-    DATABASE_URL = f"sqlite:///{os.path.join(BASE_DIR, 'idrms.db')}"
+DATABASE_URL = os.getenv("DATABASE_URL", "sqlite:///./idrms.db")
 
 # SQLite needs connect_args; remove the kwarg for other engines
 connect_kwargs = {"check_same_thread": False} if DATABASE_URL.startswith("sqlite") else {}

@@ -8,7 +8,7 @@ One Input + one Output class per resource, named after the screen that uses it.
 from __future__ import annotations
 from datetime import datetime
 from typing import List, Optional
-from pydantic import BaseModel, EmailStr, Field
+from pydantic import BaseModel, EmailStr
 
 
 # ---------------------------------------------------------------------------
@@ -187,12 +187,11 @@ class EvacuationCenterOut(BaseModel):
 # ---------------------------------------------------------------------------
 
 class ResidentInput(BaseModel):
-    name: str = Field(alias="full_name")
+    name: str
     zone: str
     address: str = ""
     household_members: int = 1
-    contact: str = Field("", alias="contact_number")
-    email: str = Field("", alias="email_address")
+    contact: str = ""
     evacuation_status: str = "Safe"
     vulnerability_tags: List[str] = []
     notes: str = ""
@@ -201,40 +200,35 @@ class ResidentInput(BaseModel):
     lat: Optional[float] = None
     lng: Optional[float] = None
 
-    model_config = {"populate_by_name": True}
-
 class ResidentUpdateInput(BaseModel):
-    name: Optional[str] = Field(None, alias="full_name")
+    name: Optional[str] = None
     zone: Optional[str] = None
     address: Optional[str] = None
     household_members: Optional[int] = None
-    contact: Optional[str] = Field(None, alias="contact_number")
-    email: Optional[str] = Field(None, alias="email_address")
+    contact: Optional[str] = None
     evacuation_status: Optional[str] = None
     vulnerability_tags: Optional[List[str]] = None
     notes: Optional[str] = None
-
-    model_config = {"populate_by_name": True}
 
 class ResidentOut(BaseModel):
     id: int
     name: str
     zone: str
-    address: Optional[str] = ""
-    household_members: Optional[int] = 1
-    contact: Optional[str] = Field(None, alias="contact_number")
-    email: Optional[str] = Field(None, alias="email_address")
-    evacuation_status: Optional[str] = "Safe"
-    vulnerability_tags: Optional[List[str]] = []
-    notes: Optional[str] = ""
-    added_by: Optional[str] = "System"
-    source: Optional[str] = "web"
-    lat: Optional[float] = None
-    lng: Optional[float] = None
-    added_at: Optional[datetime] = None
-    updated_at: Optional[datetime] = None
+    address: str
+    household_members: int
+    contact: str
+    evacuation_status: str
+    vulnerability_tags: List[str]
+    notes: str
+    added_by: str
+    source: str
+    lat: Optional[float]
+    lng: Optional[float]
+    added_at: Optional[datetime]
+    updated_at: Optional[datetime]
 
-    model_config = {"from_attributes": True, "populate_by_name": True}
+    class Config:
+        from_attributes = True
 
 
 # ---------------------------------------------------------------------------
