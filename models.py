@@ -102,6 +102,7 @@ class Resident(Base):
     address            = Column(String, default="")
     household_members  = Column(Integer, default=1)
     contact            = Column(String, default="")
+    email              = Column(String, default="")
     evacuation_status  = Column(String, default="Safe")   # Safe | Evacuated | Missing
     vulnerability_tags = Column(JSON, default=list)       # ["Elderly","PWD", …]
     notes              = Column(Text, default="")
